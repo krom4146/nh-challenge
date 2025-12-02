@@ -85,7 +85,8 @@ const Proof = () => {
                 .insert([
                     {
                         image_url: publicUrl,
-                        likes: 0
+                        likes: 0,
+                        title: '농심천심 인증샷'
                     }
                 ]);
 
