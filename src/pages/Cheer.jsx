@@ -100,8 +100,8 @@ const Cheer = () => {
         const diff = (now - date) / 1000; // seconds
 
         if (diff < 60) return '방금 전';
-        if (diff < 3600) return `${ Math.floor(diff / 60) }분 전`;
-        if (diff < 86400) return `${ Math.floor(diff / 3600) }시간 전`;
+        if (diff < 3600) return Math.floor(diff / 60) + '분 전';
+        if (diff < 86400) return Math.floor(diff / 3600) + '시간 전';
         return date.toLocaleDateString();
     };
 
