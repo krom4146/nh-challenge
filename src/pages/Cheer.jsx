@@ -1,8 +1,11 @@
+```javascript
 import React, { useState, useEffect } from 'react';
-import { Megaphone, Send } from 'lucide-react';
+import { Megaphone, Send, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useOutletContext } from 'react-router-dom';
 
 const Cheer = () => {
+    const { isAdmin } = useOutletContext();
     const [messages, setMessages] = useState([]);
     const [author, setAuthor] = useState('');
     const [content, setContent] = useState('');
@@ -16,6 +19,9 @@ const Cheer = () => {
             .channel('messages')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
                 setMessages((prev) => [payload.new, ...prev]);
+            })
+            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'messages' }, (payload) => {
+                setMessages((prev) => prev.filter(msg => msg.id !== payload.old.id));
             })
             .subscribe();
 
@@ -59,7 +65,7 @@ const Cheer = () => {
 
             setAuthor('');
             setContent('');
-            fetchMessages();
+            fetchMessages(); 
         } catch (error) {
             console.error('Error submitting message:', error);
             alert('메시지 전송 중 오류가 발생했습니다.');
@@ -68,17 +74,34 @@ const Cheer = () => {
         }
     };
 
+    const handleDelete = async (id) => {
+        if (!confirm('정말로 이 메시지를 삭제하시겠습니까?')) return;
+
+        try {
+            const { error } = await supabase
+                .from('messages')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+            // Real-time subscription will handle the UI update
+        } catch (error) {
+            console.error('Error deleting message:', error);
+            alert('메시지 삭제 중 오류가 발생했습니다.');
+        }
+    };
+
     const formatTime = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return '';
-
+        
         const now = new Date();
         const diff = (now - date) / 1000; // seconds
 
         if (diff < 60) return '방금 전';
-        if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
-        if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
+        if (diff < 3600) return `${ Math.floor(diff / 60) }분 전`;
+        if (diff < 86400) return `${ Math.floor(diff / 3600) }시간 전`;
         return date.toLocaleDateString();
     };
 
@@ -104,8 +127,16 @@ const Cheer = () => {
                     </div>
                 ) : (
                     messages.map((msg) => (
-                        <div key={msg.id || Math.random()} className="glass-panel p-4 rounded-xl shadow-sm">
-                            <div className="flex justify-between items-start mb-2">
+                        <div key={msg.id || Math.random()} className="glass-panel p-4 rounded-xl shadow-sm relative group">
+                            {isAdmin && (
+                                <button 
+                                    onClick={() => handleDelete(msg.id)}
+                                    className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-500 rounded-full hover:bg-red-200 transition-colors"
+                                >
+                                    <Trash2 size={14} />
+                                </button>
+                            )}
+                            <div className="flex justify-between items-start mb-2 pr-6">
                                 <div className="flex items-center space-x-2">
                                     <span className="w-8 h-8 rounded-full bg-nh-green/10 flex items-center justify-center text-nh-green font-bold text-xs">
                                         {(msg.author && msg.author.charAt(0)) || '?'}
@@ -139,7 +170,7 @@ const Cheer = () => {
                         className="flex-1 px-3 py-2 rounded-lg bg-white/80 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-nh-green/50 text-sm"
                     />
                 </div>
-                <button
+                <button 
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                     className="w-full py-3 bg-gradient-to-r from-nh-green to-[#006c3e] text-white font-bold rounded-lg shadow-md btn-press flex items-center justify-center space-x-2 disabled:opacity-70"
@@ -159,3 +190,4 @@ const Cheer = () => {
 };
 
 export default Cheer;
+```

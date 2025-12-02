@@ -58,83 +58,9 @@ const Layout = () => {
                         onClick={() => setIsAdminOpen(true)}
                         className="absolute right-4 text-gray-400 hover:text-nh-green transition-colors"
                     >
-                        <Lock size={16} />
-                    </button>
-                </header>
-
-                {/* Main Content */}
-                <main className="flex-1 overflow-y-auto p-4 scrollbar-hide">
-                    <Outlet />
-                </main>
-
-                {/* Bottom Navigation */}
-                <nav className="glass-nav flex justify-around items-center h-16 shrink-0 pb-safe z-10">
-                    {tabs.map((tab) => {
-                        const Icon = tab.icon;
-                        const isActive = location.pathname === tab.id;
-                        return (
-                            <button
-                                key={tab.id}
-                                onClick={() => navigate(tab.id)}
-                                className={`flex flex-col items-center justify-center w-full h-full space-y-1 btn-press ${isActive ? 'text-nh-green' : 'text-gray-500'
-                                    }`}
-                            >
-                                <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-                                <span className={`text-xs ${isActive ? 'font-bold' : 'font-medium'}`}>{tab.label}</span>
-                            </button>
-                        );
-                    })}
-                </nav>
-
-                {/* Admin Modal */}
-                {isAdminOpen && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                        <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-bold text-gray-800">관리자 설정</h3>
-                                <button onClick={() => { setIsAdminOpen(false); setPassword(''); setIsAdminAuthenticated(false); }} className="text-gray-500">
-                                    <X size={24} />
-                                </button>
-                            </div>
-
-                            {!isAdminAuthenticated ? (
-                                <div className="space-y-3">
-                                    <input
-                                        type="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        placeholder="비밀번호 입력"
-                                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-nh-green"
-                                    />
-                                    <button
-                                        onClick={handleAdminLogin}
-                                        className="w-full py-3 bg-nh-green text-white font-bold rounded-lg"
-                                    >
-                                        로그인
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="space-y-3">
-                                    <button
-                                        onClick={() => handleResetData('messages')}
-                                        className="w-full py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition-colors"
-                                    >
-                                        응원 메시지 초기화
-                                    </button>
-                                    <button
-                                        onClick={() => handleResetData('posts')}
-                                        className="w-full py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition-colors"
-                                    >
-                                        인증샷 초기화
-                                    </button>
-                                </div>
-                            )}
-                        </div>
                     </div>
-                )}
             </div>
-        </div>
-    );
+            );
 };
 
-export default Layout;
+            export default Layout;
