@@ -73,7 +73,7 @@ const Layout = () => {
                     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                         <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
                             <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-bold text-gray-800">관리자 설정 (Admin)</h3>
+                                <h3 className="text-lg font-bold text-gray-800">관리자 설정 (Admin v1.1)</h3>
                                 <button onClick={() => { setIsAdminOpen(false); setPassword(''); }} className="text-gray-500">
                                     <X size={24} />
                                 </button>
