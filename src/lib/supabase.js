@@ -19,6 +19,13 @@ export const supabase = isSupabaseConfigured
                 getPublicUrl: () => ({ data: { publicUrl: '' } }),
             }),
         },
+        channel: () => ({
+            on: () => ({
+                subscribe: () => ({
+                    unsubscribe: () => { },
+                }),
+            }),
+        }),
     };
 
 if (!isSupabaseConfigured) {
