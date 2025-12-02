@@ -50,7 +50,7 @@ const Pledge = () => {
     };
 
     return (
-        <div className="flex flex-col h-full justify-center items-center space-y-8 animate-fade-in">
+        <div className="flex flex-col h-full justify-start pt-10 items-center space-y-8 animate-fade-in overflow-y-auto pb-10 scrollbar-hide">
             <div className="text-center space-y-2">
                 <h2 className="text-3xl font-bold text-gradient animate-slide-up">디지털 서약서</h2>
                 <p className="text-white font-medium animate-slide-up drop-shadow-md" style={{ animationDelay: '0.1s' }}>
