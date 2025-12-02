@@ -7,11 +7,11 @@ const Cheer = () => {
     const [author, setAuthor] = useState('');
     const [content, setContent] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         fetchMessages();
 
-        // Optional: Real-time subscription
         const subscription = supabase
             .channel('messages')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
@@ -25,15 +25,21 @@ const Cheer = () => {
     }, []);
 
     const fetchMessages = async () => {
-        const { data, error } = await supabase
-            .from('messages')
-            .select('*')
-            .order('created_at', { ascending: false });
+        try {
+            const { data, error } = await supabase
+                .from('messages')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-        if (error) {
-            console.error('Error fetching messages:', error);
-        } else {
-            setMessages(data || []);
+            if (error) {
+                console.error('Error fetching messages:', error);
+            } else {
+                setMessages(data || []);
+            }
+        } catch (err) {
+            console.error('Unexpected error:', err);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -53,7 +59,6 @@ const Cheer = () => {
 
             setAuthor('');
             setContent('');
-            // fetchMessages is not strictly needed if real-time is working, but good for fallback
             fetchMessages();
         } catch (error) {
             console.error('Error submitting message:', error);
@@ -64,7 +69,10 @@ const Cheer = () => {
     };
 
     const formatTime = (dateString) => {
+        if (!dateString) return '';
         const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+
         const now = new Date();
         const diff = (now - date) / 1000; // seconds
 
@@ -75,40 +83,45 @@ const Cheer = () => {
     };
 
     return (
-        <div className="flex flex-col h-full space-y-4 animate-fade-in pb-2">
+        <div className="flex flex-col h-full space-y-4 pb-2">
             <div className="text-center space-y-1 shrink-0">
-                <h2 className="text-2xl font-bold text-gradient animate-slide-up">농업인 응원하기</h2>
-                <p className="text-sm text-gray-700 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+                <h2 className="text-2xl font-bold text-gradient">농업인 응원하기</h2>
+                <p className="text-sm text-gray-700">
                     따뜻한 응원의 한마디를 남겨주세요.
                 </p>
             </div>
 
             {/* Message List Area */}
             <div className="flex-1 overflow-y-auto space-y-3 p-1 scrollbar-hide">
-                {messages.length === 0 ? (
-                    <div className="text-center text-gray-500 py-10">
+                {isLoading ? (
+                    <div className="flex justify-center items-center h-full">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-nh-green"></div>
+                    </div>
+                ) : messages.length === 0 ? (
+                    <div className="glass-panel p-6 rounded-xl text-center text-gray-600">
+                        <Megaphone className="mx-auto mb-2 text-nh-green opacity-50" size={32} />
                         <p>아직 작성된 응원 메시지가 없습니다.<br />첫 번째 응원을 남겨주세요!</p>
                     </div>
                 ) : (
                     messages.map((msg) => (
-                        <div key={msg.id} className="glass-panel p-4 rounded-xl animate-slide-up shadow-sm">
+                        <div key={msg.id || Math.random()} className="glass-panel p-4 rounded-xl shadow-sm">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center space-x-2">
                                     <span className="w-8 h-8 rounded-full bg-nh-green/10 flex items-center justify-center text-nh-green font-bold text-xs">
-                                        {msg.author.charAt(0)}
+                                        {(msg.author && msg.author.charAt(0)) || '?'}
                                     </span>
-                                    <span className="font-bold text-gray-800 text-sm">{msg.author}</span>
+                                    <span className="font-bold text-gray-800 text-sm">{msg.author || '익명'}</span>
                                 </div>
                                 <span className="text-[10px] text-gray-400">{formatTime(msg.created_at)}</span>
                             </div>
-                            <p className="text-gray-700 text-sm pl-10 break-all">{msg.content}</p>
+                            <p className="text-gray-700 text-sm pl-10 break-all">{msg.content || ''}</p>
                         </div>
                     ))
                 )}
             </div>
 
             {/* Input Area */}
-            <div className="glass-panel p-3 rounded-xl space-y-2 shrink-0 animate-slide-up shadow-lg" style={{ animationDelay: '0.2s' }}>
+            <div className="glass-panel p-3 rounded-xl space-y-2 shrink-0 shadow-lg">
                 <div className="flex space-x-2">
                     <input
                         type="text"
