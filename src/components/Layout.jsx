@@ -33,33 +33,32 @@ const Layout = () => {
                 {/* Glass Overlay Background for Container */}
                 <div className="absolute inset-0 bg-white/40 backdrop-blur-sm -z-10"></div>
 
-                {/* Fixed Home Button (Highest Z-Index) */}
-                <a
-                    href="https://nh-gurye-edu.vercel.app"
-                    className="absolute top-4 right-4 z-[9999] bg-white/80 p-2 rounded-full shadow-lg text-nh-green hover:bg-white transition-all backdrop-blur-sm"
-                    aria-label="홈으로"
-                >
-                    <Home size={24} />
-                </a>
-
                 {/* Header */}
-                <header className="glass-nav p-4 text-center shrink-0 z-10 relative flex justify-center items-center">
+                <header className="glass-nav p-4 text-center shrink-0 z-50 relative flex justify-center items-center">
                     <button
                         onClick={() => setIsAdminOpen(true)}
                         className="absolute left-4 text-gray-400 hover:text-nh-green transition-colors"
                     >
                         <Lock size={16} />
                     </button>
+
                     <h1 className="text-xl font-bold text-nh-green tracking-tight">농심천심 챌린지</h1>
+
+                    <a
+                        href="https://nh-gurye-edu.vercel.app"
+                        className="absolute right-4 text-nh-green hover:text-green-700 transition-colors z-[9999]"
+                    >
+                        <Home size={28} strokeWidth={2.5} />
+                    </a>
                 </header>
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-y-auto p-4 scrollbar-hide pb-24">
+                <main className="flex-1 overflow-y-auto p-4 scrollbar-hide pb-32">
                     <Outlet context={{ isAdmin: isAdminAuthenticated }} />
                 </main>
 
                 {/* Bottom Navigation */}
-                <nav className="glass-nav flex justify-around items-center shrink-0 z-10 pb-[calc(1rem+env(safe-area-inset-bottom,20px))] pt-3">
+                <nav className="glass-nav flex justify-around items-center shrink-0 z-40 pt-3 pb-8">
                     {tabs.map((tab) => {
                         const Icon = tab.icon;
                         const isActive = location.pathname === tab.id;
@@ -67,7 +66,7 @@ const Layout = () => {
                             <button
                                 key={tab.id}
                                 onClick={() => navigate(tab.id)}
-                                className={`flex flex-col items-center justify-center w-full min-h-[50px] space-y-1 btn-press ${isActive ? 'text-nh-green' : 'text-gray-500'
+                                className={`flex flex-col items-center justify-center w-full h-full space-y-1 btn-press ${isActive ? 'text-nh-green' : 'text-gray-500'
                                     }`}
                             >
                                 <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
@@ -79,7 +78,7 @@ const Layout = () => {
 
                 {/* Admin Modal */}
                 {isAdminOpen && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                         <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-bold text-gray-800">관리자 설정 (Admin v1.1)</h3>
