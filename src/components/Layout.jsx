@@ -33,6 +33,14 @@ const Layout = () => {
                 {/* Glass Overlay Background for Container */}
                 <div className="absolute inset-0 bg-white/40 backdrop-blur-sm -z-10"></div>
 
+                {/* Top Navigation Banner */}
+                <a
+                    href="https://nh-gurye-edu.vercel.app"
+                    className="bg-nh-green text-white text-xs py-2 text-center font-medium hover:bg-green-700 transition-colors shrink-0 z-20"
+                >
+                    교육원 통합관리 홈으로 가기
+                </a>
+
                 {/* Header */}
                 <header className="glass-nav p-4 text-center shrink-0 z-10 relative flex justify-center items-center">
                     <h1 className="text-xl font-bold text-nh-green tracking-tight">농심천심 챌린지</h1>
